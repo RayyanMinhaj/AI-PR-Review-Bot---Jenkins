@@ -20,6 +20,44 @@ pipeline {
                     powershell '& git fetch --no-tags'
                 }
             }
-        }         
+        }
+        stage('Generate Disclaimer'){
+            steps{
+                script{
+                    withEnv(["PR_NUMBER=${env.GITHUB_PR_NUMBER}"]){ //i found this from the gci env cmd
+                        powershell "& ${env.PYTHON_PATH} config_files/disclaimer.py"
+                    }  
+                }
+            }    
+        }
+        stage('Generate Change Set') {
+            steps {
+                script {
+                    // Fetch from origin to make sure branches are up to date
+                    powershell '''
+                    git fetch origin
+        
+                    # Get the list of changed Python files between the destination and current branches
+                    $changed_files = git diff --name-only origin/$env:main...origin/$env:GITHUB_PR_SOURCE_BRANCH -- "*.py"
+        
+                    # Getting the code before changes
+                    foreach ($file in $changed_files) {
+                        "### $file - BEFORE CHANGES ###" | Out-File -Append before_changes.txt
+                        git show origin/$env:main:$file | Out-File -Append before_changes.txt
+                        "`n`n" | Out-File -Append before_changes.txt
+                    }
+        
+                    # Getting the code after changes
+                    foreach ($file in $changed_files) {
+                        "### $file - AFTER CHANGES ###" | Out-File -Append after_changes.txt
+                        Get-Content $file | Out-File -Append after_changes.txt
+                        "`n`n" | Out-File -Append after_changes.txt
+                    }
+                    '''
+                    // Archive the generated artifacts
+                    archiveArtifacts artifacts: 'before_changes.txt, after_changes.txt'
+                }
+            }
+        }
     }
 }
