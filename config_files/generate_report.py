@@ -7,6 +7,8 @@ from github import Github
 load_dotenv()
 key = os.getenv("OPENAI_API_KEY")
 
+g = Github(os.getenv('GITHUB_TOKEN'))
+
 
 client = Client(api_key=key)
 
@@ -230,8 +232,6 @@ if __name__ == "__main__":
     after_file = sys.argv[2]
     
     report = generate_report(before_file, after_file)
-
-    g = Github(os.getenv('GITHUB_TOKEN'))
 
     repo = g.get_repo('RayyanMinhaj/AI-PR-Review-Bot---Jenkins')
     
