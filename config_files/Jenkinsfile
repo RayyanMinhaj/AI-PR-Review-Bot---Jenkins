@@ -20,6 +20,15 @@ pipeline {
                     powershell '& git fetch --no-tags'
                 }
             }
-        }         
+        }
+        stage('Generate Disclaimer'){
+            steps{
+                script{
+                    withEnv(["PR_NUMBER=${env.GITHUB_PR_NUMBER}"]){ //i found this from the gci env cmd
+                        powershell "& ${env.PYTHON_PATH} config_files/disclaimer.py"
+                    }  
+                }
+            }    
+        }
     }
 }
