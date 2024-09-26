@@ -6,9 +6,6 @@ import os
 import subprocess as sp
 import sys
 
-import click
-import cv2
-import numpy as np
 
 sys.path.append("/workspace/frigate")
 
