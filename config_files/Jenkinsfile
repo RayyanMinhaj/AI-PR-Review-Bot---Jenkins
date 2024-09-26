@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    environment{
+        OPENAI_API_KEY = credentials('OPENAI_API_KEY')
+        PYTHON_PATH = "C:\\Users\\rayyan.minhaj\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+        GITHUB_TOKEN = credentials('GITHUB_TOKEN')
+    }
+
+
+    stages {             
+        stage('Prepare Environment') {
+            steps {
+                script {
+
+                    powershell 'gci env:\\ | ft name,value -autosize'
+                    
+                    powershell '& git config --add remote.origin.fetch +refs/heads/main:refs/remotes/origin/main'
+                    
+                    powershell '& git fetch --no-tags'
+                }
+            }
+        }         
+    }
+}
