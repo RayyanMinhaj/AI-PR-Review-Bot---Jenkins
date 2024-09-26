@@ -59,13 +59,15 @@ pipeline {
                 }
             }
         }
+
         stage('Generate Report'){
             steps{
                 script{
                     withEnv(["PR_NUMBER=${env.GITHUB_PR_NUMBER}"]){
                         powershell "& ${env.PYTHON_PATH} config_files/generate_report.py before_changes.txt after_changes.txt"          
-                }
-            }    
+                    }
+                }    
+            }
         }
     }
 }
