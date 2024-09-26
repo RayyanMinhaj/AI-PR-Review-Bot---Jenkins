@@ -43,7 +43,7 @@ pipeline {
                     # Getting the code before changes
                     foreach ($file in $changed_files) {
                         "### $file - BEFORE CHANGES ###" | Out-File -Append before_changes.txt
-                        git show origin/$env:main:$file | Out-File -Append before_changes.txt
+                        git show origin/main:$file | Out-File -Append before_changes.txt
                         "`n`n" | Out-File -Append before_changes.txt
                     }
         
