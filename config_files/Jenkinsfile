@@ -38,7 +38,7 @@ pipeline {
                     git fetch origin
         
                     # Get the list of changed Python files between the destination and current branches
-                    $changed_files = git diff --name-only origin/$env:main...origin/$env:GITHUB_PR_SOURCE_BRANCH -- "*.py"
+                    $changed_files = git diff --name-only origin/main...origin/$env:GITHUB_PR_SOURCE_BRANCH -- "*.py"
         
                     # Getting the code before changes
                     foreach ($file in $changed_files) {
