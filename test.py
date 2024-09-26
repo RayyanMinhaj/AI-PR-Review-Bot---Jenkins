@@ -7,7 +7,7 @@ import subprocess as sp
 import sys
 
 
-sys.path.append("/workspace/frigate")
+
 
 from frigate.config import FrigateConfig  # noqa: E402
 from frigate.motion import MotionDetector  # noqa: E402
