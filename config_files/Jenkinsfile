@@ -59,5 +59,12 @@ pipeline {
                 }
             }
         }
+        stage('Generate Report'){
+            steps{
+                script{
+                    def reportOutput = powershell(script: "& ${env.PYTHON_PATH} config_files/generate_report.py before_changes.txt after_changes.txt", returnStdout: true).trim()
+                }
+            }    
+        }
     }
 }
