@@ -24,7 +24,8 @@ pipeline {
         stage('Get PR Author') {
             steps {
                 script {
-                    def author = powershell "git show -s --format="%aN" ${env.GIT_COMMIT}"
+    
+                    def author = powershell(script: "git show -s --format=\"%aN\" ${env.GIT_COMMIT}", returnStdout: true).trim()
                     echo "Author: ${author}"
                     def allowedAuthors = ["RayyanMinhaj"]  
                     
