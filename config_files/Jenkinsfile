@@ -21,6 +21,23 @@ pipeline {
                 }
             }
         }
+        stage('Get PR Author') {
+            steps {
+                script {
+    
+                    def author = powershell(script: "git show -s --format=\"%aN\" ${env.GIT_COMMIT}", returnStdout: true).trim()
+                    echo "Author: ${author}"
+                    def allowedAuthors = ["RayyanMinhaj"]  
+                    
+                    if (allowedAuthors.contains(author)) {
+                        echo "Author ${author} is allowed."
+                    } else {
+                        echo "Author ${author} is not allowed to run this pipeline."
+                        error "Pipeline execution stopped due to unauthorized author."
+                    }
+                }
+            }
+        }
         stage('Generate Disclaimer'){
             steps{
                 script{
@@ -38,12 +55,12 @@ pipeline {
                     git fetch origin
         
                     # Get the list of changed Python files between the destination and current branches
-                    $changed_files = git diff --name-only origin/$env:main...origin/$env:GITHUB_PR_SOURCE_BRANCH -- "*.py"
+                    $changed_files = git diff --name-only origin/main...origin/$env:GITHUB_PR_SOURCE_BRANCH -- "*.py"
         
                     # Getting the code before changes
                     foreach ($file in $changed_files) {
                         "### $file - BEFORE CHANGES ###" | Out-File -Append before_changes.txt
-                        git show origin/$env:main:$file | Out-File -Append before_changes.txt
+                        git show origin/main:$file | Out-File -Append before_changes.txt
                         "`n`n" | Out-File -Append before_changes.txt
                     }
         
@@ -57,6 +74,16 @@ pipeline {
                     // Archive the generated artifacts
                     archiveArtifacts artifacts: 'before_changes.txt, after_changes.txt'
                 }
+            }
+        }
+
+        stage('Generate Report'){
+            steps{
+                script{
+                    withEnv(["PR_NUMBER=${env.GITHUB_PR_NUMBER}"]){
+                        powershell "& ${env.PYTHON_PATH} config_files/generate_report.py before_changes.txt after_changes.txt"          
+                    }
+                }    
             }
         }
     }
