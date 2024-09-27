@@ -21,6 +21,23 @@ pipeline {
                 }
             }
         }
+        stage('Get PR Author') {
+            steps {
+                script {
+                    def author = powershell(script: 'git show -s --format="%aN" ${GIT_COMMIT}', returnStdout: true).trim()
+                    echo "Author: ${author}"
+s
+                    def allowedAuthors = ["RayyanMinhaj"]  
+                    
+                    if (allowedAuthors.contains(author)) {
+                        echo "Author ${author} is allowed."
+                    } else {
+                        echo "Author ${author} is not allowed to run this pipeline."
+                        error "Pipeline execution stopped due to unauthorized author."
+                    }
+                }
+            }
+        }
         stage('Generate Disclaimer'){
             steps{
                 script{
