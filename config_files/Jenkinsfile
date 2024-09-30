@@ -47,32 +47,16 @@ pipeline {
                 }
             }    
         }
-        stage('Generate Change Set') {
+        stage('Generate Git Diff') {
             steps {
                 script {
-                    // Fetch from origin to make sure branches are up to date
-                    powershell '''
-                    git fetch origin
-        
-                    # Get the list of changed Python files between the destination and current branches
-                    $changed_files = git diff --name-only origin/main...origin/$env:GITHUB_PR_SOURCE_BRANCH -- "*.py"
-        
-                    # Getting the code before changes
-                    foreach ($file in $changed_files) {
-                        "### $file - BEFORE CHANGES ###" | Out-File -Append before_changes.txt
-                        git show origin/main:$file | Out-File -Append before_changes.txt
-                        "`n`n" | Out-File -Append before_changes.txt
-                    }
-        
-                    # Getting the code after changes
-                    foreach ($file in $changed_files) {
-                        "### $file - AFTER CHANGES ###" | Out-File -Append after_changes.txt
-                        Get-Content $file | Out-File -Append after_changes.txt
-                        "`n`n" | Out-File -Append after_changes.txt
-                    }
-                    '''
-                    // Archive the generated artifacts
-                    archiveArtifacts artifacts: 'before_changes.txt, after_changes.txt'
+                    // Perform a diff for .py files and save the output with the actual changes to a text file
+                    def diffOutput = powershell(returnStdout: true, script: '''
+                        git diff origin/main...origin/$env:GITHUB_PR_SOURCE_BRANCH -- *.py > git_diff.txt
+                    ''').trim()
+
+                    // Archive the git diff output as an artifact
+                    archiveArtifacts artifacts: 'git_diff.txt', allowEmptyArchive: false
                 }
             }
         }
@@ -81,7 +65,7 @@ pipeline {
             steps{
                 script{
                     withEnv(["PR_NUMBER=${env.GITHUB_PR_NUMBER}"]){
-                        powershell "& ${env.PYTHON_PATH} config_files/generate_report.py before_changes.txt after_changes.txt"          
+                        powershell "& ${env.PYTHON_PATH} config_files/generate_report.py git_diff.txt"          
                     }
                 }    
             }
