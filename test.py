@@ -1,24 +1,39 @@
 import random
 
-# Constants
+# Define the game board size
 BOARD_SIZE = 10
+
+# Define the number of mines
 NUM_MINES = 10
 
-# Game state
-board = [[0 for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
-player_pos = (0, 0)
+# Define the game board
+board = [[0 for x in range(BOARD_SIZE)] for y in range(BOARD_SIZE)]
+
+# Define the player's position
+player_x = 0
+player_y = 0
+
+# Define the game state
 game_over = False
+
+# Define the number of moves
 moves = 0
+
+# Define the number of flags placed
 flags = 0
+
+# Define the number of mines found
 mines_found = 0
 
-def clear_screen():
+# Define the game loop
+while not game_over:
+    # Clear the screen
     print("\033[H\033[J", end="")
 
-def print_board():
+    # Print the game board
     for y in range(BOARD_SIZE):
         for x in range(BOARD_SIZE):
-            if (x, y) == player_pos:
+            if x == player_x and y == player_y:
                 print("P", end=" ")
             elif board[y][x] == -1:
                 print("M", end=" ")
@@ -28,86 +43,68 @@ def print_board():
                 print(board[y][x], end=" ")
         print()
 
-def print_stats():
+    # Print the game stats
     print("Moves:", moves)
     print("Flags:", flags)
     print("Mines found:", mines_found)
 
-def update_player_pos(direction):
-    x, y = player_pos
+    # Get the player's input
+    action = input("Enter your action (move, flag, or unflag): ")
+    direction = input("Enter the direction (up, down, left, or right): ")
+
+    # Update the player's position
     if direction == "up":
-        y -= 1
+        player_y -= 1
     elif direction == "down":
-        y += 1
+        player_y += 1
     elif direction == "left":
-        x -= 1
+        player_x -= 1
     elif direction == "right":
-        x += 1
-    return x, y
+        player_x += 1
 
-def place_mines():
-    mine_count = 0
-    while mine_count < NUM_MINES:
-        x = random.randint(0, BOARD_SIZE - 1)
-        y = random.randint(0, BOARD_SIZE - 1)
-        if board[y][x] == 0:
-            board[y][x] = -1
-            mine_count += 1
+    # Check if the player has hit a mine
+    if board[player_y][player_x] == -1:
+        game_over = True
+        print("Game over! You hit a mine.")
+    else:
+        moves += 1
 
-def count_nearby_mines(x, y):
-    count = 0
-    for dy in [-1, 0, 1]:
-        for dx in [-1, 0, 1]:
-            nx = x + dx
-            ny = y + dy
-            if 0 <= nx < BOARD_SIZE and 0 <= ny < BOARD_SIZE and board[ny][nx] == -1:
-                count += 1
-    return count
+    # Check if the player has won
+    if moves == BOARD_SIZE * BOARD_SIZE - NUM_MINES:
+        game_over = True
+        print("Congratulations! You found all the mines.")
 
-def calculate_mine_counts():
-    for y in range(BOARD_SIZE):
-        for x in range(BOARD_SIZE):
-            if board[y][x] != -1:
-                board[y][x] = count_nearby_mines(x, y)
+    # Place a mine
+    if action == "move":
+        # Do nothing
+        pass
+    elif action == "flag":
+        if board[player_y][player_x] == 0:
+            board[player_y][player_x] = "F"
+            flags += 1
+    elif action == "unflag":
+        if board[player_y][player_x] == "F":
+            board[player_y][player_x] = 0
+            flags -= 1
 
-def game_loop():
-    global player_pos, game_over, moves, flags, mines_found
+# Place the mines randomly
+mine_count = 0
+while mine_count < NUM_MINES:
+    x = random.randint(0, BOARD_SIZE - 1)
+    y = random.randint(0, BOARD_SIZE - 1)
+    if board[y][x] == 0:
+        board[y][x] = -1
+        mine_count += 1
 
-    while not game_over:
-        clear_screen()
-        print_board()
-        print_stats()
-
-        action = input("Enter your action (move, flag, or unflag): ")
-        direction = input("Enter the direction (up, down, left, or right): ")
-
-        new_pos = update_player_pos(direction)
-        if board[new_pos[1]][new_pos[0]] == -1:
-            game_over = True
-            print("Game over! You hit a mine.")
-        else:
-            player_pos = new_pos
-            moves += 1
-
-        if moves == BOARD_SIZE * BOARD_SIZE - NUM_MINES:
-            game_over = True
-            print("Congratulations! You found all the mines.")
-
-        if action == "move":
-            pass
-        elif action == "flag":
-            if board[player_pos[1]][player_pos[0]] == 0:
-                board[player_pos[1]][player_pos[0]] = "F"
-                flags += 1
-        elif action == "unflag":
-            if board[player_pos[1]][player_pos[0]] == "F":
-                board[player_pos[1]][player_pos[0]] = 0
-                flags -= 1
-
-def main():
-    place_mines()
-    calculate_mine_counts()
-    game_loop()
-
-if __name__ == "__main__":
-    main()
+# Calculate the number of mines around each cell
+for y in range(BOARD_SIZE):
+    for x in range(BOARD_SIZE):
+        if board[y][x] != -1:
+            count = 0
+            for dy in [-1, 0, 1]:
+                for dx in [-1, 0, 1]:
+                    nx = x + dx
+                    ny = y + dy
+                    if 0 <= nx < BOARD_SIZE and 0 <= ny < BOARD_SIZE and board[ny][nx] == -1:
+                        count += 1
+            board[y][x] = count
