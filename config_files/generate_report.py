@@ -16,14 +16,14 @@ def read_file(file_path):
     with open(file_path, 'r') as file:
         return file.read()
 
-def generate_report(before_file, after_file):
-    #diff_content = read_file(diff_file)
-    before_content = read_file(before_file)
-    after_content = read_file(after_file)
+def generate_report(diff_file):
+    diff_content = read_file(diff_file)
+    #before_content = read_file(before_file)
+    #after_content = read_file(after_file)
 
 
     prompt = f"""
-    I have two sets of code, one before and one after changes (from a pull request). I need a comprehensive code review in markdown format based on the following criteria:
+    I have a git diff file containing before and after changes (from a pull request). I need a comprehensive code review in markdown format based on the following criteria:
 
 1. **Overview of Changes**: Summarize the purpose of the changes and what has been added, removed, or modified.
 2. **Code Quality and Best Practices**: Assess code readability, structure, and whether it adheres to best practices and coding standards. Identify any areas for refactoring or improvement.
@@ -35,18 +35,12 @@ def generate_report(before_file, after_file):
 8. **Potential Risks and Red Flags**: Identify any risks that could arise from the changes, such as regressions or unstable behavior.
 9. **Future Considerations**: Suggest areas where the code could be further improved or refactored in future iterations.
 
-Here are the code snippets:
-
-
-**Before Changes:**  
-{before_content}
-
-**After Changes:**  
-{after_content}
+Here is the contents of the diff file:
+{diff_content}
 
 **IMPORTANT**
 - You need to reference every point you make with a snippet from inside the code!
-- If there are changes for multiple files in before and after files, treat them as separate code reviews but under the same section heading!
+- If there are changes for multiple files in the diff, treat them as separate code reviews but under the same section heading!
 
 ---
 
@@ -228,10 +222,10 @@ if __name__ == "__main__":
     
     import sys
     #diff_file = sys.argv[1]
-    before_file = sys.argv[1]
-    after_file = sys.argv[2]
+    diff_file = sys.argv[1]
+    #after_file = sys.argv[2]
     
-    report = generate_report(before_file, after_file)
+    report = generate_report(diff_file)
 
     repo = g.get_repo('RayyanMinhaj/AI-PR-Review-Bot---Jenkins')
     
