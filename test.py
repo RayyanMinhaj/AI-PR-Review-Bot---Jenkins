@@ -70,43 +70,7 @@ def calculate_mine_counts():
             if board[y][x] != -1:
                 board[y][x] = count_nearby_mines(x, y)
 
-def game_loop():
-    global player_pos, game_over, moves, flags, mines_found
 
-    while not game_over:
-        clear_screen()
-        print_board()
-        print_stats()
-
-        action = input("Enter your action (move, flag, or unflag): ")
-        direction = input("Enter the direction (up, down, left, or right): ")
-
-        new_pos = update_player_pos(direction)
-        if board[new_pos[1]][new_pos[0]] == -1:
-            game_over = True
-            print("Game over! You hit a mine.")
-        else:
-            player_pos = new_pos
-            moves += 1
-
-        if moves == BOARD_SIZE * BOARD_SIZE - NUM_MINES:
-            game_over = True
-            print("Congratulations! You found all the mines.")
-
-        if action == "move":
-            pass
-        elif action == "flag":
-            if board[player_pos[1]][player_pos[0]] == 0:
-                board[player_pos[1]][player_pos[0]] = "F"
-                flags += 1
-        elif action == "unflag":
-            if board[player_pos[1]][player_pos[0]] == "F":
-                board[player_pos[1]][player_pos[0]] = 0
-                flags -= 1
-
-def main():
-    place_mines()
-    calculate_mine_counts()
     game_loop()
 
 if __name__ == "__main__":
