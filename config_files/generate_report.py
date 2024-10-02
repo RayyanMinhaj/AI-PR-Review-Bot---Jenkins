@@ -23,7 +23,7 @@ def generate_report(diff_file):
 
 
     prompt = f"""
-    I have a git diff file containing before and after changes (from a pull request). I need a comprehensive code review in markdown format based on the following criteria:
+    I have a git diff file containing before and after changes from a pull request for one or multiple files. I need a comprehensive code review in markdown format for each file based on the following criteria:
 
 1. **Overview of Changes**: Summarize the purpose of the changes and what has been added, removed, or modified.
 2. **Code Quality and Best Practices**: Assess code readability, structure, and whether it adheres to best practices and coding standards. Identify any areas for refactoring or improvement.
@@ -40,6 +40,7 @@ Here is the contents of the diff file:
 
 **IMPORTANT**
 - You need to reference every point you make with a snippet from inside the code!
+- There can be multiple files within the git diff file, treat them as separate code reviews but under same headings.
 - If there are changes for multiple files in the diff, treat them as separate code reviews but under the same section heading!
 
 ---
