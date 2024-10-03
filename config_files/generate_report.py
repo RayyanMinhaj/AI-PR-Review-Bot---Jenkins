@@ -240,17 +240,17 @@ if __name__ == "__main__":
     #after_file = sys.argv[2]
     
     #here we need to call this inside a loop and before that break it into batches AND patches
+    patches = []
     patches = break_into_patches(diff_file)
+    
+    repo = g.get_repo('RayyanMinhaj/AI-PR-Review-Bot---Jenkins')
+    pr_number = int(os.getenv('PR_NUMBER'))
+    pull_request = repo.get_pull(pr_number)
     
     for patch in patches:   
         print(patch + "\n\n")
         report = generate_report(patch)
 
-        repo = g.get_repo('RayyanMinhaj/AI-PR-Review-Bot---Jenkins')
-        
-        pr_number = int(os.getenv('PR_NUMBER'))
-        pull_request = repo.get_pull(pr_number)
-    
         pull_request.create_issue_comment(report)
 
 

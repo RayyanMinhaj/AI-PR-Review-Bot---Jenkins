@@ -65,7 +65,9 @@ pipeline {
             steps{
                 script{
                     withEnv(["PR_NUMBER=${env.GITHUB_PR_NUMBER}"]){
-                        powershell "& ${env.PYTHON_PATH} config_files/generate_report.py git_diff.txt"          
+                        powershell "& ${env.PYTHON_PATH} config_files/generate_report.py git_diff.txt > patches.txt"   
+
+                        archiveArtifacts artifacts: 'patches.txt', allowEmptyArchive: false       
                     }
                 }    
             }
