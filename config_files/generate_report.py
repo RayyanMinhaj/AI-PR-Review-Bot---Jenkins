@@ -243,6 +243,7 @@ if __name__ == "__main__":
     patches = break_into_patches(diff_file)
     
     for patch in patches:   
+        print(patch + "\n\n")
         report = generate_report(diff_file)
 
         repo = g.get_repo('RayyanMinhaj/AI-PR-Review-Bot---Jenkins')
