@@ -84,7 +84,7 @@ Navigate to
 
 ---
 
-## Step 4 - Jenkinsfile Configuration
+## Step 4 - Jenkinsfile and Script Configuration
 
 As we are not currently executing these python scripts on Docker, we’re going to have to manually set up variables. 
 
@@ -112,6 +112,12 @@ If you would like for it to work on every type of file in your repository, use t
 
 `git diff origin/main...origin/$env:GITHUB_PR_SOURCE_BRANCH > git_diff.txt`
 
+### d.) `disclaimer.py` and `generate_report.py` File [IMPORTANT]
+For both the files, the user will need to manually update the username/repo line which looks like this
+`repo = g.get_repo('RayyanMinhaj/AI-PR-Review-Bot---Jenkins')`
+
+- In `disclaimer.py` this line is located on line number `6`
+- In `generate_report.py` this is located on line number `246`
 ---
 
 ## Step 5 - Testing
