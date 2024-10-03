@@ -13,7 +13,7 @@ g = Github(os.getenv('GITHUB_TOKEN'))
 client = Client(api_key=key)
 
 def read_file(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding="utf-16-le") as file:
         return file.read()
 
 def generate_report(patch):
