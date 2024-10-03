@@ -219,6 +219,19 @@ Please use the example report as a reference to generate a similarly detailed co
         
     return content
 
+
+
+def break_into_patches(diff_file):
+    diff_content = read_file(diff_file)
+
+    patches = diff_content.split('diff --git ')[1:]
+    patches = ['diff --git ' + patch for patch in patches]
+
+    return patches
+
+
+
+
 if __name__ == "__main__":
     
     import sys
@@ -226,14 +239,18 @@ if __name__ == "__main__":
     diff_file = sys.argv[1]
     #after_file = sys.argv[2]
     
-    report = generate_report(diff_file)
-
-    repo = g.get_repo('RayyanMinhaj/AI-PR-Review-Bot---Jenkins')
+    #here we need to call this inside a loop and before that break it into batches AND patches
+    patches = break_into_patches(diff_file)
     
-    pr_number = int(os.getenv('PR_NUMBER'))
-    pull_request = repo.get_pull(pr_number)
-  
-    pull_request.create_issue_comment(report)
+    for patch in patches:   
+        report = generate_report(diff_file)
+
+        repo = g.get_repo('RayyanMinhaj/AI-PR-Review-Bot---Jenkins')
+        
+        pr_number = int(os.getenv('PR_NUMBER'))
+        pull_request = repo.get_pull(pr_number)
+    
+        pull_request.create_issue_comment(report)
 
 
 
