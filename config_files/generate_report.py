@@ -16,8 +16,8 @@ def read_file(file_path):
     with open(file_path, 'r') as file:
         return file.read()
 
-def generate_report(diff_file):
-    diff_content = read_file(diff_file)
+def generate_report(patch):
+    #diff_content = read_file(diff_file)
     #before_content = read_file(before_file)
     #after_content = read_file(after_file)
 
@@ -36,7 +36,7 @@ def generate_report(diff_file):
 9. **Future Considerations**: Suggest areas where the code could be further improved or refactored in future iterations.
 
 Here is the contents of the diff file:
-{diff_content}
+{patch}
 
 **IMPORTANT**
 - You need to reference every point you make with a snippet from inside the code!
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     
     for patch in patches:   
         print(patch + "\n\n")
-        report = generate_report(diff_file)
+        report = generate_report(patch)
 
         repo = g.get_repo('RayyanMinhaj/AI-PR-Review-Bot---Jenkins')
         
